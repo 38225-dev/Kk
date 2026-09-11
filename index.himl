@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FITQEST - Home & Daily Quests</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #1a1a24;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Mobile Container Frame */
+    .app-container {
+      width: 100%;
+      max-width: 390px;
+      background-color: #F8F7FA;
+      min-height: 100vh;
+      position: relative;
+      padding: 16px;
+      padding-bottom: 84px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border-radius: 24px;
+      overflow: hidden;
+    }
+    
+    /* Top Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 6px 4px;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 900;
+      color: #38285C;
+      letter-spacing: 0.5px;
+    }
+
+    .logout-top-btn {
+      font-size: 11px;
+      color: #5E44C5;
+      background: none;
+      border: none;
+      text-decoration: underline;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Top Stats Card Header */
+    .stats-card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 16px 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.5fr;
+      gap: 8px;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      margin-bottom: 16px;
+    }
+
+    .avatar-sec, .donut-sec {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .avatar-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 3px solid #38285C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: #FFEAD8;
+      margin-bottom: 4px;
+    }
+
+    .donut-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 4px solid #38285C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 11px;
+      color: #38285C;
+      margin-bottom: 4px;
+    }
+
+    .stat-val { font-size: 12px; font-weight: 800; color: #38285C; }
+    .stat-lbl { font-size: 9px; color: #71717a; font-weight: 600; }
+
+    .bars-sec {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .bar-group { display: flex; flex-direction: column; }
+    .bar-lbl { font-size: 8px; font-weight: 800; color: #52525b; margin-bottom: 2px; }
+    .bar-bg { width: 100%; height: 7px; background: #e4e4e7; border-radius: 10px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 10px; transition: width 0.3s ease; }
+    .bar-fill.hp { background: #E55353; width: 80%; }
+    .bar-fill.exp { background: #2EAD65; width: 60%; }
+    .bar-fill.cal { background: #F08A24; width: 45%; }
+    .bar-fill.mins { background: #3A4556; width: 70%; }
+
+    /* Streak Banner */
+    .streak-banner {
+      background: linear-gradient(135deg, #FF8C00 0%, #FF5500 100%);
+      border-radius: 20px;
+      padding: 14px 18px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(255, 85, 0, 0.25);
+    }
+
+    .streak-info h3 { font-size: 16px; font-weight: 800; }
+    .streak-info p { font-size: 10px; opacity: 0.9; margin-top: 2px; }
+    .streak-fire { font-size: 28px; }
+
+    /* Main Quests Section */
+    .quests-card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 18px 16px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #38285C;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-subtitle {
+      font-size: 11px;
+      color: #71717a;
+      margin-bottom: 14px;
+    }
+
+    .quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quest-item {
+      background: #F8F7FA;
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid #f0edf7;
+      transition: all 0.2s ease;
+    }
+
+    .quest-item.completed {
+      background: #F0FDF4;
+      border-color: #DCFCE7;
+      opacity: 0.75;
+    }
+
+    .quest-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quest-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .quest-icon.water { background: #E0F2FE; }
+    .quest-icon.workout { background: #EAE4F8; }
+    .quest-icon.sleep { background: #FFF3EB; }
+
+    .quest-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #374151;
+    }
+
+    .quest-reward {
+      font-size: 10px;
+      color: #2EAD65;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .claim-btn {
+      background: #38285C;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .claim-btn:active { transform: scale(0.95); }
+
+    .claim-btn.done {
+      background: #2EAD65;
+      cursor: default;
+    }
+
+    /* Boss Event Banner Widget */
+    .boss-widget {
+      background: linear-gradient(135deg, #38285C 0%, #1e1438 100%);
+      border-radius: 20px;
+      padding: 16px;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .boss-left { display: flex; align-items: center; gap: 12px; }
+    .boss-avatar { font-size: 32px; }
+    .boss-title { font-size: 13px; font-weight: 800; color: #FFD700; }
+    .boss-desc { font-size: 10px; color: #d1d5db; margin-top: 2px; }
+    .boss-action { font-size: 18px; color: #FFD700; }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid #f4f4f5;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      border-bottom-left-radius: 24px;
+      border-bottom-right-radius: 24px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      color: #a1a1aa;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .nav-item.active {
+      color: #38285C;
+      font-weight: 800;
+    }
+
+    .nav-icon { font-size: 18px; }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Top Header -->
+    <div class="header">
+      <div class="brand">FITQEST</div>
+      <button class="logout-top-btn" onclick="alert('ออกจากระบบเรียบร้อย')">ออกจากระบบ</button>
+    </div>
+
+    <!-- Stats Header Card -->
+    <div class="stats-card">
+      <div class="avatar-sec">
+        <div class="avatar-circle">👦</div>
+        <div class="stat-val">38225</div>
+        <div class="stat-lbl">LV. 7</div>
+      </div>
+      <div class="donut-sec">
+        <div class="donut-circle" id="donutProgress">60%</div>
+        <div class="stat-lbl">LV. 7</div>
+      </div>
+      <div class="bars-sec">
+        <div class="bar-group">
+          <div class="bar-lbl">HP</div>
+          <div class="bar-bg"><div class="bar-fill hp" id="hpBar"></div></div>
+        </div>
+        <div class="bar-group">
+          <div class="bar-lbl">EXP</div>
+          <div class="bar-bg"><div class="bar-fill exp" id="expBar"></div></div>
+        </div>
+        <div class="bar-group">
+          <div class="bar-lbl">CALORIES</div>
+          <div class="bar-bg"><div class="bar-fill cal"></div></div>
+        </div>
+        <div class="bar-group">
+          <div class="bar-lbl">ACTIVE MINS</div>
+          <div class="bar-bg"><div class="bar-fill mins"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Streak Card -->
+    <div class="streak-banner">
+      <div class="streak-info">
+        <h3>🔥 ลุยต่อเนื่อง 5 วัน!</h3>
+        <p>ทำเควสต์อีก 1 วันเพื่อรับโบนัส EXP x2</p>
+      </div>
+      <div class="streak-fire">⚡</div>
+    </div>
+
+    <!-- Daily Quests Section -->
+    <div class="quests-card">
+      <div class="card-title">
+        <span>⚔️ เควสต์ประจำวัน</span>
+        <span style="font-size: 11px; color: #5E44C5; font-weight: 600;" id="questCounter">0/3 สำเร็จ</span>
+      </div>
+      <div class="card-subtitle">พิชิตเควสต์เพื่ออัปเลเวลตัวละครของคุณ</div>
+
+      <div class="quest-list">
+        <!-- Quest 1 -->
+        <div class="quest-item" id="q1">
+          <div class="quest-left">
+            <div class="quest-icon water">💧</div>
+            <div>
+              <div class="quest-title">ดื่มน้ำสะอาด 2 ลิตร</div>
+              <div class="quest-reward">+20 EXP | +10 HP</div>
+            </div>
+          </div>
+          <button class="claim-btn" onclick="completeQuest('q1', 20, 10)">รับรางวัล</button>
+        </div>
+
+        <!-- Quest 2 -->
+        <div class="quest-item" id="q2">
+          <div class="quest-left">
+            <div class="quest-icon workout">🏃</div>
+            <div>
+              <div class="quest-title">ออกกำลังกายอย่างน้อย 20 นาที</div>
+              <div class="quest-reward">+50 EXP | +20 HP</div>
+            </div>
+          </div>
+          <button class="claim-btn" onclick="completeQuest('q2', 50, 20)">รับรางวัล</button>
+        </div>
+
+        <!-- Quest 3 -->
+        <div class="quest-item" id="q3">
+          <div class="quest-left">
+            <div class="quest-icon sleep">😴</div>
+            <div>
+              <div class="quest-title">นอนหลับครบ 7-8 ชั่วโมง</div>
+              <div class="quest-reward">+30 EXP | +15 HP</div>
+            </div>
+          </div>
+          <button class="claim-btn" onclick="completeQuest('q3', 30, 15)">รับรางวัล</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boss Event Widget -->
+    <div class="boss-widget" onclick="alert('⚔️ กิจกรรม Boss Raid: พร้อมลุยในวันเสาร์นี้!')">
+      <div class="boss-left">
+        <div class="boss-avatar">🐲</div>
+        <div>
+          <div class="boss-title">WEEKLY BOSS RAID</div>
+          <div class="boss-desc">ปราบ "มังกรแคลอรี" รวมพลัง 10,000 kcal</div>
+        </div>
+      </div>
+      <div class="boss-action">➔</div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <button class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span>Home</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span>Journal</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">🏆</span>
+        <span>Challenges</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">📊</span>
+        <span>Progress</span>
+      </button>
+      <button class="nav-item">
+        <span class="nav-icon">👤</span>
+        <span>Profile</span>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let completedQuestsCount = 0;
+    let currentEXP = 60;
+    let currentHP = 80;
+
+    function completeQuest(questId, expReward, hpReward) {
+      const questItem = document.getElementById(questId);
+      const button = questItem.querySelector('.claim-btn');
+
+      if (questItem.classList.contains('completed')) return;
+
+      // อัปเดตสถานะเควสต์
+      questItem.classList.add('completed');
+      button.classList.add('done');
+      button.innerText = 'สำเร็จแล้ว ✓';
+
+      completedQuestsCount++;
+      document.getElementById('questCounter').innerText = completedQuestsCount + '/3 สำเร็จ';
+
+      // อัปเดตหลอด EXP และ HP
+      currentEXP = Math.min(100, currentEXP + 15);
+      currentHP = Math.min(100, currentHP + 10);
+
+      document.getElementById('expBar').style.width = currentEXP + '%';
+      document.getElementById('hpBar').style.width = currentHP + '%';
+      document.getElementById('donutProgress').innerText = currentEXP + '%';
+
+      alert(`🎉 ทำเควสต์สำเร็จ! คุณได้รับ +${expReward} EXP และ +${hpReward} HP`);
+    }
+  </script>
+
+</body>
+</html>
